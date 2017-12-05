@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">图虫下载</string>
+    <string name="details"><![CDATA[1.分享必须以图集形式分享->选择微信或QQ平台分享链接(不能分享图片) \n\n2.在微信或者QQ里直接打开分享的图集，然后复制链接 \n\n3.打开本程序粘贴链接->点击解析 \n\n4.长按下载单张 \n\n 当前版本0.0.1 \n\n 下版本新功能： \n\n 1.单击图片支持放大缩小操作 \n\n 2.增加解析历史]]></string>
+</resources>
