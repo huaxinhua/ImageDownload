@@ -97,7 +97,7 @@ public class HomeFragment extends Fragment {
                 .subscribe(new Consumer<GankIo>() {
                     @Override
                     public void accept(GankIo gankIo) throws Exception {
-                        Glide.with(getActivity()).load(gankIo.getResults().get(0).getUrl()).into(iv);
+                        Glide.with(getActivity()).load(gankIo.getResults().get(3).getUrl()).into(iv);
                     }
                 });
 

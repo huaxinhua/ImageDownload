@@ -6,6 +6,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.mmm.imagedownload.R;
+import com.mmm.imagedownload.utils.ImageManager;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
@@ -35,7 +36,8 @@ public class ImageListAdapter extends CommonAdapter {
     @Override
     protected void convert(ViewHolder holder, Object o, int position) {
         ImageView img_list = holder.getView(R.id.img);
-        Glide.with(context).load(mDatas.get(position)).into(img_list);
+        //Glide.with(context).load(mDatas.get(position)).into(img_list);
+        ImageManager.getInstance().loadImage(context,mDatas.get(position),img_list,R.mipmap.app_icon,R.mipmap.ic_launcher);
     }
 
 

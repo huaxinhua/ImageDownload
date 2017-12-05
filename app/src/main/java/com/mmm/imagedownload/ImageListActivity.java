@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,7 +41,7 @@ public class ImageListActivity extends BaseActivity {
     @Bind(R.id.rv_img)
     RecyclerView rvImg;
     @Bind(R.id.bt_download)
-    Button btDownload;
+    FloatingActionButton btDownload;
     private int flag;
     private String url;
     private Element doc;
