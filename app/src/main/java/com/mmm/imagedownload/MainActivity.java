@@ -3,9 +3,6 @@ package com.mmm.imagedownload;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -13,8 +10,6 @@ import android.widget.RadioGroup;
 import com.mmm.imagedownload.ui.fragment.HomeFragment;
 import com.mmm.imagedownload.ui.fragment.MeFragment;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,9 +27,7 @@ public class MainActivity extends BaseActivity {
     RadioGroup radio;
     private HomeFragment homeFragment;
     private MeFragment meFragment;
-    private FragmentManager fragmentManager;
-    private FragmentTransaction transaction;
-    private List<Fragment> mFragment = new ArrayList<Fragment>();
+    private Fragment mFragment;//当前显示的Fragment
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,40 +39,21 @@ public class MainActivity extends BaseActivity {
 
     private void initView() {
         rbHome.setChecked(true);
-        fragmentManager = getSupportFragmentManager();
-        transaction = fragmentManager.beginTransaction();
         homeFragment = new HomeFragment();
+        meFragment = new MeFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().add(R.id.realtabcontent,homeFragment).commit();
+        mFragment = homeFragment;
         // 初始化页面设置
-        transaction.add(R.id.realtabcontent, homeFragment).commit();
         radio.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 switch (i){
                     case R.id.rb_home:
-                        Log.i("--------->","rb_home");
-                        transaction = fragmentManager.beginTransaction();
-                        hideFragments(transaction);
-                        if (homeFragment == null) {
-                            homeFragment = new HomeFragment();
-                            Log.i("--------->","new->rb_home");
-                            transaction.add(R.id.realtabcontent, homeFragment).commit();
-                        } else {
-                            transaction.show(homeFragment);
-                            Log.i("--------->","show->rb_home");
-                        }
+                        switchFragment(homeFragment);
                         break;
                     case R.id.rb_me:
-                        Log.i("--------->","rb_me");
-                        transaction = fragmentManager.beginTransaction();
-                        hideFragments(transaction);
-                        if (meFragment == null) {
-                            meFragment = new MeFragment();
-                            Log.i("--------->","new->rb_me");
-                            transaction.add(R.id.realtabcontent, meFragment).commit();
-                        } else {
-                            transaction.show(meFragment);
-                            Log.i("--------->","show->rb_me");
-                        }
+                        switchFragment(meFragment);
                         break;
                 }
             }
@@ -88,20 +62,22 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    /**
-     * 将所有的Fragment都置为隐藏状态。
-     *
-     * @param transaction 用于对Fragment执行操作的事务
-     */
-
-    private void hideFragments(FragmentTransaction transaction) {
-        if (homeFragment != null) {
-            transaction.hide(homeFragment);
-        }
-        if (meFragment != null) {
-            transaction.hide(meFragment);
+    private void switchFragment(Fragment fragment) {
+        //判断当前显示的Fragment是不是切换的Fragment
+        if(mFragment != fragment) {
+            //判断切换的Fragment是否已经添加过
+            if (!fragment.isAdded()) {
+                //如果没有，则先把当前的Fragment隐藏，把切换的Fragment添加上
+                getSupportFragmentManager().beginTransaction().hide(mFragment)
+                        .add(R.id.realtabcontent,fragment).commit();
+            } else {
+                //如果已经添加过，则先把当前的Fragment隐藏，把切换的Fragment显示出来
+                getSupportFragmentManager().beginTransaction().hide(mFragment).show(fragment).commit();
+            }
+            mFragment = fragment;
         }
     }
+
 
 
     @Override

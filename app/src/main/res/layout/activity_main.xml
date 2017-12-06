@@ -48,7 +48,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:drawableTop="@drawable/btn_tab_oneself_selector"
-            android:text="个人中心" />
+            android:text="设置" />
 
     </RadioGroup>
 

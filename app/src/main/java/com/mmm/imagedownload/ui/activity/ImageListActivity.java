@@ -1,4 +1,4 @@
-package com.mmm.imagedownload;
+package com.mmm.imagedownload.ui.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,20 +6,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.blankj.utilcode.utils.ToastUtils;
-
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
 import com.lzy.okgo.callback.StringCallback;
-
+import com.mmm.imagedownload.BaseActivity;
+import com.mmm.imagedownload.R;
 import com.mmm.imagedownload.adapter.ImageListAdapter;
+import com.mmm.imagedownload.adapter.ShowImagesAdapter;
+import com.mmm.imagedownload.common.Config;
+import com.mmm.imagedownload.common.Constant;
+import com.mmm.imagedownload.widget.ShowImagesDialog;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 
@@ -57,16 +60,23 @@ public class ImageListActivity extends BaseActivity {
         ButterKnife.bind(this);
         context = this;
         url = getIntent().getStringExtra("url");
-        path = Environment.getExternalStorageDirectory().getPath() + "/图虫下载/";
         rvImg.setLayoutManager(new LinearLayoutManager(context));
+        getDeviceDensity();
         initData();
+    }
+
+    private void getDeviceDensity() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        Config.EXACT_SCREEN_HEIGHT = metrics.heightPixels;
+        Config.EXACT_SCREEN_WIDTH = metrics.widthPixels;
     }
 
 
     private void initData() {
         OkGo.get(url).execute(new StringCallback() {
             @Override
-            public void onSuccess(String s, Call call, okhttp3.Response response) {
+            public void onSuccess(String s, Call call, Response response) {
                 doc = Jsoup.parse(s);
                 Elements img = doc.getElementsByClass("post-content");
                 for (Element element : img.select("img")) {
@@ -85,6 +95,7 @@ public class ImageListActivity extends BaseActivity {
                     @Override
                     public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
                         //ImageDetailsActivity.skip(ImageListActivity.this,imageList.get(position));
+                        new ShowImagesDialog(ImageListActivity.this, imageList,position).show();
                     }
 
                     @Override
@@ -97,7 +108,7 @@ public class ImageListActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(Call call, okhttp3.Response response, Exception e) {
+            public void onError(Call call, Response response, Exception e) {
                 super.onError(call, response, e);
                 ToastUtils.showShortToast("解析失败->" + e.toString());
             }
@@ -110,14 +121,14 @@ public class ImageListActivity extends BaseActivity {
      * @param position
      */
     private void DownLoadImage(int position) {
-        OkGo.get(imageList.get(position)).execute(new FileCallback(path, System.currentTimeMillis() + ".jpg") {
+        OkGo.get(imageList.get(position)).execute(new FileCallback(Constant.DowmloadPath, System.currentTimeMillis() + ".jpg") {
             @Override
-            public void onSuccess(File file, Call call, okhttp3.Response response) {
+            public void onSuccess(File file, Call call, Response response) {
                 ToastUtils.showShortToast("下载完成");
             }
 
             @Override
-            public void onError(Call call, okhttp3.Response response, Exception e) {
+            public void onError(Call call, Response response, Exception e) {
                 super.onError(call, response, e);
                 ToastUtils.showShortToast("下载失败->" + e.toString());
             }
@@ -134,7 +145,7 @@ public class ImageListActivity extends BaseActivity {
     public void onClick() {
         for (int i = 0; i < imageList.size(); i++) {
             final String img_name = System.currentTimeMillis() + i + ".jpg";
-            OkGo.get(imageList.get(i)).execute(new FileCallback(path, img_name) {
+            OkGo.get(imageList.get(i)).execute(new FileCallback(Constant.DowmloadPath, img_name) {
                 @Override
                 public void onSuccess(File file, Call call, Response response) {
                     ToastUtils.showShortToast(img_name + "下载完成");
@@ -151,5 +162,6 @@ public class ImageListActivity extends BaseActivity {
         intent.putExtra("url", url);
         activity.startActivity(intent);
     }
+
 
 }
